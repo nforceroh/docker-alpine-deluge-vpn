@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv ash
+
+VPN_USER=${VPN_USER:-NOUSER}
+VPN_PASS=${VPN_PASS:-NOPASSWORD}
+
+echo "Creating vpn credentials"
+echo "${VPN_USER}" > /config/openvpn-credentials.txt
+echo "${VPN_PASS}" >> /config/openvpn-credentials.txt
+
