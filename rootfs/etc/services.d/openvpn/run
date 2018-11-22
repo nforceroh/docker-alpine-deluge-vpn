@@ -1,5 +1,15 @@
 #!/usr/bin/with-contenv ash
 
-echo "Starting openvpn"
+VPN_ENABLED=${VPN_ENABLED:-no}
+VPN_ENABLED=`echo ${VPN_ENABLED} | tr [:upper:] [:lower:]`
+VPNCONFIG=${VPNCONFIG:-United-States-New-York.ovpn}
 
-exec openvpn --reneg-sec 0 --mute-replay-warnings --auth-nocache --script-security 2 --up-delay --up-restart --writepid /config/openvpn.pid --remap-usr1 SIGHUP --pull-filter ignore 'up' --pull-filter ignore 'down' --remote-random --verb 6 --config /etc/openvpn/slickvpn/United-States-Columbus.ovpn
+VPNPID="/config/openvpn.pid"
+VPNCONFIGPATH="/etc/openvpn/slickvpn"
+VPNOPTIONS="--reneg-sec 0 --mute-replay-warnings --auth-nocache --script-security 2 --up-delay --up-restart --writepid ${VPNPID} --remap-usr1 SIGHUP --pull-filter ignore 'up' --pull-filter ignore 'down' --remote-random --verb 1"
+
+if [ "${VPN_ENABLED}" != "no" ]; then
+  echo "Starting openvpn"
+  exec openvpn ${VPNOPTIONS} --config ${VPNCONFIGPATH}/${VPNCONFIG}
+  route add -host 10.0.0.100 gw 172.17.0.1
+fi
