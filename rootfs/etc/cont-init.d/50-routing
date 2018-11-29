@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+
+if [ -e /config/defaultroute ]; then
+  rm -f /config/defaultroute
+fi
+
+GW=`ip r | grep default|awk '{print $3}'`
+echo "${GW}" > /config/defaultroute
+

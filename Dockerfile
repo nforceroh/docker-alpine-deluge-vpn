@@ -11,23 +11,13 @@ RUN \
   echo "Installing openvpn and deluge" \
   && echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
   && apk update \
-  && apk add --no-cache boost geoip py2-pip openssl intltool openvpn \
-  && apk add --no-cache libtorrent-rasterbar bash py2-pip deluge@testing libtorrent-rasterbar \
-  && apk add --no-cache zlib py-setuptools py2-openssl py2-chardet py-twisted py2-mako \
-  && pip install --no-cache-dir \
-        pyxdg service_identity incremental constantly packaging automat \
-#  && wget -qO- \
-#        http://download.deluge-torrent.org/source/deluge-${DELUGE_VERSION}.tar.gz | tar xz  \
-#    cd \
-#        deluge-${DELUGE_VERSION}/ && \
-#    python setup.py -q build && \
-#    python setup.py -q install && \
-#    /usr/bin/deluge-web \
-#        -f -c ${D_DIR}/config -l ${D_DIR}/config/deluge-web-init.log -L debug && \
-#    sleep 10 && \
-#    pkill -15 python && \
-#    apk del \
-##        .libtorrent .build && \
+  && apk --no-cache add py2-pip boost geoip intltool openvpn shadow bash deluge@testing \
+#  && apk --no-cache --virtual=build-dependencies \
+#	add openssl-dev gcc python-dev musl-dev libffi-dev \
+#  && pip install --upgrade pip \
+#  && pip install cryptography==2.1.4 service_identity pyopenssl==17.5.0 incremental constantly packaging automat MarkupSafe \
+#  && apk del --purge \
+#	build-dependencies \
 #    rm -rf \
 #        /usr/lib/python2.7/site-packages/deluge-${DELUGE_VERSION}-py2.7.egg/share/* \
 #        /usr/lib/python2.7/site-packages/deluge-${DELUGE_VERSION}-py2.7.egg/deluge/data/pixmaps/* \
@@ -36,9 +26,9 @@ RUN \
 #        /usr/lib/python2.7/site-packages/deluge-${DELUGE_VERSION}-py2.7.egg/deluge/ui/i18n/* \
 #        /usr/bin/deluge /usr/bin/deluged /usr/bin/deluge-gtk
   && echo "Cleaning up" \
-  && rm -rf /var/cache/apk/*
+  && rm -rf /var/cache/apk/* /root/.cache /tmp/* 
 
-COPY rootfs/ /
+#COPY rootfs/ /
 
 VOLUME /config
 

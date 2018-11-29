@@ -6,10 +6,15 @@ VPNCONFIG=${VPNCONFIG:-United-States-New-York.ovpn}
 
 VPNPID="/config/openvpn.pid"
 VPNCONFIGPATH="/etc/openvpn/slickvpn"
-VPNOPTIONS="--reneg-sec 0 --mute-replay-warnings --auth-nocache --script-security 2 --up-delay --up-restart --writepid ${VPNPID} --remap-usr1 SIGHUP --pull-filter ignore 'up' --pull-filter ignore 'down' --remote-random --verb 1"
+VPNOPTIONS="--reneg-sec 0 --mute-replay-warnings --auth-nocache --script-security 2 --up-delay --up-restart --writepid ${VPNPID} --remap-usr1 SIGHUP --pull-filter ignore 'up' --pull-filter ignore 'down' --remote-random --verb 1 --script-security 2 --up /etc/openvpn/vpnup.sh --down /etc/openvpn/vpndown.sh"
+
+cat /dev/null > /config/.startingenv
+for e in `env`; do
+ echo "Saving ${e}"
+ echo "export ${e}" >>/config/.startingenv
+done
 
 if [ "${VPN_ENABLED}" != "no" ]; then
   echo "Starting openvpn"
   exec openvpn ${VPNOPTIONS} --config ${VPNCONFIGPATH}/${VPNCONFIG}
-  route add -host 10.0.0.100 gw 172.17.0.1
 fi
