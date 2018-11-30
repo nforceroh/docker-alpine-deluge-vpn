@@ -5,33 +5,34 @@ MAINTAINER Sylvain Martin (sylvain@nforcer.com)
 ENV UMASK=000
 ENV PUID=3001
 ENV PGID=3000
-
+# logging levels none, critical, error, warning, info, info
+ENV DELUGE_LOGGING=info
+ENV DELUGE_MOVE_COMPLETED=/data/done
+ENV DELUGE_TORRENT_LOCATION=/data/torrents
+ENV DELUGE_DOWNLOAD_WORK=/data/work
+ENV DELUGE_AUTOADD_LOCATION=/data/incoming
+ENV DELUGE_LISTEN_PORT=8080,8080
 
 RUN \
   echo "Installing openvpn and deluge" \
   && echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
   && apk update \
   && apk --no-cache add py2-pip boost geoip intltool openvpn shadow bash deluge@testing \
-#  && apk --no-cache --virtual=build-dependencies \
-#	add openssl-dev gcc python-dev musl-dev libffi-dev \
-#  && pip install --upgrade pip \
-#  && pip install cryptography==2.1.4 service_identity pyopenssl==17.5.0 incremental constantly packaging automat MarkupSafe \
-#  && apk del --purge \
-#	build-dependencies \
-#    rm -rf \
-#        /usr/lib/python2.7/site-packages/deluge-${DELUGE_VERSION}-py2.7.egg/share/* \
-#        /usr/lib/python2.7/site-packages/deluge-${DELUGE_VERSION}-py2.7.egg/deluge/data/pixmaps/* \
-#        /usr/lib/python2.7/site-packages/deluge-${DELUGE_VERSION}-py2.7.egg/deluge/ui/gtkui/* \
-#        /usr/lib/python2.7/site-packages/deluge-${DELUGE_VERSION}-py2.7.egg/deluge/ui/console/* \
-#        /usr/lib/python2.7/site-packages/deluge-${DELUGE_VERSION}-py2.7.egg/deluge/ui/i18n/* \
-#        /usr/bin/deluge /usr/bin/deluged /usr/bin/deluge-gtk
+  && apk --no-cache --virtual=build-dependencies \
+	add openssl-dev gcc python-dev musl-dev libffi-dev \
+  && pip install --upgrade pip \
+  && pip install cryptography==2.1.4 service_identity pyopenssl==17.5.0 incremental constantly packaging automat MarkupSafe \
+  && apk del --purge \
+	build-dependencies \
+  && mkdir -p /usr/share/GeoIP \
+  && wget -O - http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz|gunzip -c > /usr/share/GeoIP/GeoIP.dat \
   && echo "Cleaning up" \
   && rm -rf /var/cache/apk/* /root/.cache /tmp/* 
-
-#COPY rootfs/ /
 
 VOLUME /config
 
 VOLUME /data
 
 EXPOSE 8112
+
+COPY rootfs/ /

@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv bash
+
+echo "Starting deluge-web"
+exec s6-setuidgid abc deluge-web -c /config -L ${DELUGE_LOGGING}

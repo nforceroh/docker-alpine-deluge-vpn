@@ -1,0 +1,38 @@
+#!/usr/bin/with-contenv bash
+
+if [ ! -e /config/core.conf ]; then
+  echo "Initing /config/core.conf"
+  cat /config/init/core.conf.default > /config/core.conf
+fi
+
+if [ ! -e /config/web.conf ]; then
+  echo "Initing /config/web.conf"
+  cat /config/init/web.conf.default > /config/web.conf
+fi
+
+if grep DELUGE_MOVE_COMPLETED /config/core.conf > /dev/null ; then
+  echo "/config/core.conf: Swapping DELUGE_MOVE_COMPLETED to ${DELUGE_MOVE_COMPLETED}"
+  sed -i.bak "s|DELUGE_MOVE_COMPLETED|${DELUGE_MOVE_COMPLETED}|g" /config/core.conf
+fi
+
+if grep DELUGE_TORRENT_LOCATION /config/core.conf > /dev/null ; then
+  echo "/config/core.conf: Swapping DELUGE_TORRENT_LOCATION to ${DELUGE_TORRENT_LOCATION}"
+  sed -i.bak "s|DELUGE_TORRENT_LOCATION|${DELUGE_TORRENT_LOCATION}|g" /config/core.conf
+fi
+
+if grep DELUGE_DOWNLOAD_WORK /config/core.conf > /dev/null ; then
+  echo "/config/core.conf: Swapping DELUGE_DOWNLOAD_WORK to ${DELUGE_DOWNLOAD_WORK}"
+  sed -i.bak "s|DELUGE_DOWNLOAD_WORK|${DELUGE_DOWNLOAD_WORK}|g" /config/core.conf
+fi
+
+if grep DELUGE_AUTOADD_LOCATION /config/core.conf > /dev/null ; then
+  echo "/config/core.conf: Swapping DELUGE_AUTOADD_LOCATION to ${DELUGE_AUTOADD_LOCATION}"
+  sed -i.bak "s|DELUGE_AUTOADD_LOCATION|${DELUGE_AUTOADD_LOCATION}|g" /config/core.conf
+fi
+
+if grep DELUGE_LISTEN_PORT /config/core.conf > /dev/null ; then
+  echo "/config/core.conf: Swapping DELUGE_LISTEN_PORT to ${DELUGE_LISTEN_PORT}"
+  sed -i.bak "s|DELUGE_LISTEN_PORT|${DELUGE_LISTEN_PORT}|g" /config/core.conf
+fi
+
+
