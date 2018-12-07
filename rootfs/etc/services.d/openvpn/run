@@ -16,5 +16,5 @@ done
 
 if [ "${VPN_ENABLED}" != "no" ]; then
   echo "Starting openvpn"
-  exec openvpn ${VPNOPTIONS} --config ${VPNCONFIGPATH}/${VPNCONFIG} --remote-random
+  exec openvpn ${VPNOPTIONS} --config ${VPNCONFIGPATH}/${VPNCONFIG}
 fi
