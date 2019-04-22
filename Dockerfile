@@ -22,10 +22,7 @@ RUN \
 	add openssl-dev gcc python-dev musl-dev libffi-dev \
   && pip install --upgrade pip \
   && pip install cryptography==2.1.4 service_identity pyopenssl==17.5.0 incremental constantly packaging automat MarkupSafe \
-  && apk del --purge \
-	build-dependencies \
-  && mkdir -p /usr/share/GeoIP \
-  && wget -O - http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz|gunzip -c > /usr/share/GeoIP/GeoIP.dat \
+  && apk del --purge build-dependencies \
   && echo "Cleaning up" \
   && rm -rf /var/cache/apk/* /root/.cache /tmp/* 
 
