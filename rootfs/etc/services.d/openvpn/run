@@ -14,6 +14,16 @@ for e in `env`; do
  echo "export ${e}" >>/config/.startingenv
 done
 
+if [ ! -c /dev/net/tun ]; then
+  if [ ! -d /dev/net ]; then
+    echo "Making /dev/net"
+    mkdir -p /dev/net
+  fi
+  echo "Making node /dev/net/tun"
+  mknod /dev/net/tun c 10 200
+  chmod 0666 /dev/net/tun
+fi
+
 if [ "${VPN_ENABLED}" != "no" ]; then
   echo "Starting openvpn"
   exec openvpn ${VPNOPTIONS} --config ${VPNCONFIGPATH}/${VPNCONFIG}
