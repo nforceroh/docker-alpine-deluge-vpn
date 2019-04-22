@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+
+if [ -e /usr/share/GeoIP.dat.gz ]; then
+   if [ ! -e /usr/share/GeoIP.dat ]; then
+     echo "Expanding /usr/share/GeoIP.dat.gz"
+     cd /usr/share/
+     gunzip GeoIP.dat.gz
+   fi
+fi

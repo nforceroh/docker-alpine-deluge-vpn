@@ -12,6 +12,7 @@ ENV DELUGE_TORRENT_LOCATION=/data/torrents
 ENV DELUGE_DOWNLOAD_WORK=/data/work
 ENV DELUGE_AUTOADD_LOCATION=/data/incoming
 ENV DELUGE_LISTEN_PORT=8080,8080
+ENV PYTHON_EGG_CACHE=/config/plugins/
 
 RUN \
   echo "Installing openvpn and deluge" \
@@ -24,12 +25,8 @@ RUN \
   && pip install cryptography==2.1.4 service_identity pyopenssl==17.5.0 incremental constantly packaging automat MarkupSafe \
   && apk del --purge build-dependencies \
   && echo "Cleaning up" \
-  && rm -rf /var/cache/apk/* /root/.cache /tmp/* 
+  && rm -rf /var/cache/apk/* /root/.cache /tmp/*
 
 VOLUME /config
-
-VOLUME /data
-
 EXPOSE 8112
-
 COPY rootfs/ /
