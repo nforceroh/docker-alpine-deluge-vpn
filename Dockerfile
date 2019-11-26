@@ -1,4 +1,4 @@
-FROM nforceroh/docker-alpine-base
+FROM nforceroh/d_alpine-s6:edge
 
 MAINTAINER Sylvain Martin (sylvain@nforcer.com)
 
@@ -13,20 +13,21 @@ ENV DELUGE_DOWNLOAD_WORK=/data/work
 ENV DELUGE_AUTOADD_LOCATION=/data/incoming
 ENV DELUGE_LISTEN_PORT=8080,8080
 ENV PYTHON_EGG_CACHE=/config/plugins/
+ENV VPNCONFIG="TorGuard.USA-NEW-YORK.ovpn"
 
 RUN \
   echo "Installing openvpn and deluge" \
   && echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
   && apk update \
-  && apk --no-cache add py2-pip boost geoip intltool openvpn shadow bash deluge@testing \
-  && apk --no-cache --virtual=build-dependencies \
-	add openssl-dev gcc python-dev musl-dev libffi-dev \
-  && pip install --upgrade pip \
-  && pip install cryptography==2.1.4 service_identity pyopenssl==17.5.0 incremental constantly packaging automat MarkupSafe \
-  && apk del --purge build-dependencies \
-  && echo "Cleaning up" \
+  && apk add --no-cache py2-pip boost geoip intltool openvpn shadow bash deluge@testing \
+  && apk add --no-cache --virtual .pip-build-deps make g++ autoconf python2-dev python3-dev libffi-dev libressl-dev \
+  && pip install automat incremental constantly service_identity packaging automat MarkupSafe \
+  && apk del .pip-build-deps \
+  && cd /tmp; wget https://torguard.net/downloads/OpenVPN-UDP-Standard.zip \
+  && unzip -j OpenVPN-UDP-Standard.zip -d /etc/openvpn \
   && rm -rf /var/cache/apk/* /root/.cache /tmp/*
 
 VOLUME /config
 EXPOSE 8112
 COPY rootfs/ /
+ENTRYPOINT [ "/init" ]
