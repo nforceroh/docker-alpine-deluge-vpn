@@ -4,15 +4,16 @@ echo "Running vpnup script"
 source /config/.startingenv
 env
 
+iptables -A INPUT -i tun0 -j ACCEPT
+iptables -A OUTPUT -o tun0 -j ACCEPT
 if [ ! -z "${LAN_NETWORK}" ]; then
   IFS=','; tokens=( ${LAN_NETWORK} )
   for subnet in "${tokens[@]}"; do
     echo "Adding static route for ${subnet} gw ${route_net_gateway}"
     ip route add ${subnet} via ${route_net_gateway} dev eth0
+    iptables -A OUTPUT -m owner --uid-owner abc ! -d ${subnet} \! -o tun0 -j REJECT
   done
 fi
-iptables -A INPUT -i tun0 -j ACCEPT
-iptables -A OUTPUT -o tun0 -j ACCEPT
 
 LOCALSUBNET=$(grep LOCALSUBNET /config/defaultroute|cut -f2 -d:)
 echo "Adding static route for ${LOCALSUBNET} gw ${route_net_gateway}"
