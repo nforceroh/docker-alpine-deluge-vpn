@@ -5,7 +5,7 @@ MAINTAINER Sylvain Martin (sylvain@nforcer.com)
 ENV UMASK=000
 ENV PUID=3001
 ENV PGID=3000
-# logging levels none, critical, error, warning, info, info
+# logging levels none, debug, critical, error, warning, info
 ENV DELUGE_LOGGING=info
 ENV DELUGE_MOVE_COMPLETED=/data/done
 ENV DELUGE_TORRENT_LOCATION=/data/torrents
@@ -19,8 +19,8 @@ RUN \
   echo "Installing openvpn and deluge" \
   && echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
   && apk update \
-  && apk add --no-cache py2-pip boost geoip intltool openvpn shadow bash bind-tools deluge@testing \
-  && apk add --no-cache --virtual .pip-build-deps make gcc g++ autoconf python2-dev python3-dev libffi-dev libressl-dev \
+  && apk add --no-cache python3 py3-pip boost geoip intltool openvpn shadow bash bind-tools deluge@testing \
+  && apk add --no-cache --virtual .pip-build-deps make gcc g++ autoconf python3-dev libffi-dev libressl-dev \
   && pip install automat incremental constantly service_identity packaging automat MarkupSafe \
   && apk del .pip-build-deps \
   && cd /tmp; wget https://torguard.net/downloads/OpenVPN-UDP-Standard.zip \
