@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 SHELL := /bin/bash
-IMG_NAME := d_alpine-deluge
+IMG_NAME := d_alpine-deluge-vpn
 IMG_REPO := nforceroh
 VERSION := $(shell date +"v%Y%m%d" )
 
