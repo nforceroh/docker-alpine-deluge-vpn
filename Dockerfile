@@ -19,9 +19,10 @@ RUN \
   echo "Installing openvpn and deluge" \
   && echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
   && apk update \
+  && apk upgrade \
   && apk add --no-cache python3 py3-pip boost geoip intltool openvpn shadow bash bind-tools deluge@testing \
   && apk add --no-cache --virtual .pip-build-deps make gcc g++ autoconf python3-dev libffi-dev libressl-dev \
-  && pip install automat incremental constantly service_identity packaging automat MarkupSafe \
+  && pip3 install automat incremental constantly service_identity packaging automat MarkupSafe \
   && apk del .pip-build-deps \
   && cd /tmp; wget https://torguard.net/downloads/OpenVPN-UDP-Standard.zip \
   && unzip -j OpenVPN-UDP-Standard.zip -d /etc/openvpn \
