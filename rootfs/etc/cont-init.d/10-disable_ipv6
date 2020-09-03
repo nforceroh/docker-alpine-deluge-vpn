@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv bash
+
+echo "Disabling IPv6"
+sysctl -p /etc/sysctl.d/disable_ipv6 
