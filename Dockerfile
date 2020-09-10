@@ -17,10 +17,9 @@ ENV VPNCONFIG="TorGuard.USA-NEW-YORK.ovpn"
 
 RUN \
   echo "Installing openvpn and deluge" \
-  && echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
   && apk update \
   && apk upgrade \
-  && apk add --no-cache python3 py3-pip boost geoip intltool openvpn shadow bash bind-tools deluge@testing \
+  && apk add --no-cache python3 py3-pip boost geoip intltool openvpn shadow bash bind-tools deluge \
   && apk add --no-cache --virtual .pip-build-deps make gcc g++ autoconf python3-dev libffi-dev libressl-dev \
   && pip3 install automat incremental constantly service_identity packaging automat MarkupSafe \
   && apk del .pip-build-deps \
