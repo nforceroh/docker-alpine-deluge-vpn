@@ -1,0 +1,80 @@
+#!/usr/bin/with-contenv sh
+# shellcheck shell=sh
+
+# extract docker network CIDR notation
+DECTECTED_DOCKER_CIDR=$(ip -o -f inet addr show | awk '/scope global/ {print $4}')
+
+# fallback to DOCKER_CIDR if no DECTECTED_DOCKER_CIDR
+DOCKER_CIDR="${DECTECTED_DOCKER_CIDR:-DOCKER_CIDR}"
+
+# extract VPN protocol, host and port from configuration
+CONFIG_PROTO=$(awk '/proto / { print $2 }' "${OPENVPN_CONFIG_FILE}")
+CONFIG_VPN_HOSTS_AND_PORTS="$(awk '/remote / { print $2 " " $3 }' "${OPENVPN_CONFIG_FILE}")"
+
+VPN_PROTO="${CONFIG_PROTO:='udp'}"
+VPN_HOSTS_AND_PORTS="${CONFIG_VPN_HOSTS_AND_PORTS}"
+
+DNS_SERVER=${DNS}
+
+# Check that VPN information was sucessfully extracted from configuration
+
+if [ -z "${VPN_HOSTS_AND_PORTS}" ]; then
+    echo "ERROR could not find VPN_HOSTS_AND_PORTS in the VPN configuration"
+    exit 1
+fi
+
+if [ -z "${VPN_PROTO}" ]; then
+    echo "INFO: the VPN protocol could not be detected, fell back to default:
+    VPN_PROTO:  $VPN_PROTO
+    VPN_HOSTS_AND_PORTS:
+    $VPN_HOSTS_AND_PORTS
+    "
+fi
+
+# change openvpn config 'tcp-client' to compatible iptables 'tcp'
+if [ "${VPN_PROTO}" = "tcp-client" ]; then
+    export VPN_PROTO="tcp"
+fi
+
+# reset iptables
+iptables --flush
+iptables --delete-chain
+iptables -t nat --flush
+iptables -t nat --delete-chain
+
+# Set default policies to drop all communication unless specifically allowed
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables -P FORWARD DROP
+
+# allow localhost traffic
+iptables -A INPUT -j ACCEPT -i lo
+iptables -A OUTPUT -j ACCEPT -o lo
+
+# allow DNS traffic outside VPN tunnel with given DNS resolver only on UDP and DNS port
+
+# NOTE: these rules are dropped before starting qbittorrent
+iptables -A OUTPUT -p udp -d "${DNS_SERVER}" --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -p udp -s "${DNS_SERVER}" --sport 53 -m state --state ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp -d "${DNS_SERVER}" --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp -s "${DNS_SERVER}" --sport 53 -m state --state ESTABLISHED -j ACCEPT
+
+# allow LAN traffic
+iptables -A INPUT --src "${LAN}" -j ACCEPT -i eth+
+iptables -A OUTPUT -d "${LAN}" -j ACCEPT -o eth+
+
+# allow traffic with other containers on docker network
+iptables -A INPUT --src "${DOCKER_CIDR}" -j ACCEPT -i eth+
+iptables -A OUTPUT -d "${DOCKER_CIDR}" -j ACCEPT -o eth+
+
+# allow traffic with VPN host over VPN's port and with VPN's protocol
+echo "${VPN_HOSTS_AND_PORTS}" | while IFS= read -r line; do
+VPN_HOST=$(echo "${line}" | awk '{ print $1 }')
+VPN_PORT=$(echo "${line}" | awk '{ print $2 }')
+iptables -A OUTPUT -j ACCEPT -d "${VPN_HOST}" -o eth+ -p "${VPN_PROTO}" -m "${VPN_PROTO}" --dport "${VPN_PORT}"
+iptables -A INPUT -j ACCEPT -s "${VPN_HOST}" -i eth+ -p "${VPN_PROTO}" -m "${VPN_PROTO}" --sport "${VPN_PORT}"
+done
+
+# allow traffic through VPN tunnel interface
+iptables -A INPUT -j ACCEPT -i tun+
+iptables -A OUTPUT -j ACCEPT -o tun+

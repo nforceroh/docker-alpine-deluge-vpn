@@ -5,7 +5,7 @@
   "port": 8112, 
   "enabled_plugins": [], 
   "pwd_sha1": "7e86862c142107ffbff2814dd8d6d09fd2b6d24c", 
-  "theme": "gray", 
+  "theme": "dark", 
   "show_sidebar": true, 
   "sidebar_show_zero": false, 
   "pkey": "ssl/daemon.pkey", 
