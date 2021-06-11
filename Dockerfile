@@ -27,21 +27,21 @@ ENV \
   DELUGE_AUTOADD_LOCATION=/data/incoming \
   DELUGE_LISTEN_PORT=8080,8080 \
   PYTHON_EGG_CACHE=/config/plugins/ \
-  VPNCONFIG="TorGuard.USA-NEW-YORK.ovpn" 
+  VPNCONFIG="TorGuard.USA-NEW-YORK" 
 
 RUN \
   echo "Installing openvpn and deluge" \
   && apk update \
   && apk upgrade \
-  && apk add --no-cache python3 py3-pip boost geoip intltool openvpn shadow bash bind-tools deluge \
-  && apk add --no-cache --virtual .pip-build-deps make gcc g++ autoconf python3-dev libffi-dev libressl-dev \
-  && pip3 install automat incremental constantly service_identity packaging automat MarkupSafe \
-  && apk del .pip-build-deps \
+  && apk add --no-cache build-base ca-certificates libffi-dev libjpeg-turbo-dev linux-headers p7zip \
+      py3-libtorrent-rasterbar py3-openssl py3-pip py3-wheel python3-dev unrar unzip zlib-dev geoip \
+      intltool openvpn shadow bash bind-tools deluge \
   && cd /tmp; wget https://torguard.net/downloads/OpenVPN-UDP-Standard.zip \
   && unzip -j OpenVPN-UDP-Standard.zip -d /etc/openvpn \
   && mv /usr/lib/python3.8/site-packages/deluge/ui/web/icons /usr/lib/python3.8/site-packages/deluge/ui/web/icons.bak \
   && mv /usr/lib/python3.8/site-packages/deluge/ui/web/css/deluge.css /usr/lib/python3.8/site-packages/deluge/ui/web/css/deluge.css.bak \
   && wget -c https://github.com/joelacus/deluge-web-dark-theme/raw/main/deluge_web_dark_theme.tar.gz -O - | tar -xz -C /usr/lib/python3.8/site-packages/deluge/ui/web/ \
+  && apk del build-base libffi-dev libjpeg-turbo-dev linux-headers py3-wheel python3-dev zlib-dev \
   && rm -rf /var/cache/apk/* /root/.cache /tmp/*
 
 VOLUME /config

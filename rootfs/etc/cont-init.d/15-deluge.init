@@ -34,5 +34,3 @@ if grep DELUGE_LISTEN_PORT /config/core.conf > /dev/null ; then
   echo "/config/core.conf: Swapping DELUGE_LISTEN_PORT to ${DELUGE_LISTEN_PORT}"
   sed -i.bak "s|DELUGE_LISTEN_PORT|${DELUGE_LISTEN_PORT}|g" /config/core.conf
 fi
-
-

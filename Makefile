@@ -23,7 +23,7 @@ build:
 		--build-arg BASE_IMAGE="nforceroh/d_alpine-s6:edge" \
 		-t "$(IMG_REPO)/$(IMG_NAME)" \
 		-t "$(IMG_REPO)/$(IMG_NAME):$(BUILD_TAG)" \
-		-t "$(IMG_REPO)/$(IMG_NAME):latest"
+		-t "$(IMG_REPO)/$(IMG_NAME):latest" 
 #	TAGS=" -t $(IMG_REPO)/$(IMG_NAME) $(IMG_REPO)/$(IMG_NAME):$(BUILD_DATE) -t $(IMG_REPO)/$(IMG_NAME) $(IMG_REPO)/$(IMG_NAME):latest "
 
 gitcommit:

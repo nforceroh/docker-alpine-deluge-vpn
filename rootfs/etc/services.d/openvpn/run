@@ -2,7 +2,7 @@
 
 VPN_ENABLED=${VPN_ENABLED:-no}
 VPN_ENABLED=`echo ${VPN_ENABLED} | tr [:upper:] [:lower:]`
-VPNCONFIG=${VPNCONFIG:-TorGuard.USA-NEW-YORK.ovpn}
+VPNCONFIG=${VPNCONFIG:-TorGuard.USA-NEW-YORK}
 
 VPNPID="/config/openvpn.pid"
 VPNCONFIGPATH="/etc/openvpn"
@@ -26,5 +26,5 @@ fi
 
 if [ "${VPN_ENABLED}" != "no" ]; then
   echo "Starting openvpn"
-  exec openvpn ${VPNOPTIONS} --config ${VPNCONFIGPATH}/${VPNCONFIG} --auth-user-pass /config/openvpn-credentials.txt
+  exec openvpn ${VPNOPTIONS} --config ${VPNCONFIGPATH}/${VPNCONFIG}.ovpn --auth-user-pass /config/openvpn-credentials.txt
 fi

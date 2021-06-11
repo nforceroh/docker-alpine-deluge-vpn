@@ -1,0 +1,5 @@
+#!/bin/bash
+
+crontab -l >/tmp/c
+echo "*/1 * * * * /usr/local/bin/check_tun.sh" >> /tmp/c
+crontab /tmp/c
